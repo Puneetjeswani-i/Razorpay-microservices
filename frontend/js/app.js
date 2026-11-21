@@ -1,5 +1,6 @@
 import { settings, session } from "./store.js";
-import { ensureSeeded } from "./mock.js";
+import { ensureSeeded, resetDemo, DEMO_LOGIN } from "./mock.js";
+import { api } from "./api.js";
 import { esc, icon } from "./ui.js";
 import { renderLogin, renderSignup } from "./pages/auth.js";
 import { renderDashboard } from "./pages/dashboard.js";
@@ -90,6 +91,20 @@ async function route() {
   if (path === "/logout") {
     session.clear();
     return navigate("/login");
+  }
+  // Shareable direct link: <site>/#/demo opens the dashboard with the demo account.
+  if (path === "/demo") {
+    settings.mode = "demo";
+    ensureSeeded();
+    try {
+      const { accessToken } = await api.login(DEMO_LOGIN);
+      session.set({ accessToken, email: DEMO_LOGIN.email });
+    } catch {
+      resetDemo();
+      const { accessToken } = await api.login(DEMO_LOGIN);
+      session.set({ accessToken, email: DEMO_LOGIN.email });
+    }
+    return navigate("/dashboard");
   }
   if (path === "/login" || path === "/signup") {
     if (session.get()) return navigate("/dashboard");
