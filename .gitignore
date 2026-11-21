@@ -1,0 +1,5 @@
+.DS_Store
+.idea/
+target/
+*.log
+k8s/k8s-secrets.env
