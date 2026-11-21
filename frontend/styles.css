@@ -180,7 +180,10 @@ tbody tr.clickable:hover { background: var(--surface-2); }
 
 /* ---------- Checkout ---------- */
 .checkout-layout { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); align-items: start; }
-@media (max-width: 1180px) { .checkout-layout { grid-template-columns: 1fr; } }
+@media (max-width: 1180px) { .checkout-layout { grid-template-columns: minmax(0, 1fr); } }
+/* Let grid items shrink to the screen; long JSON in .codebox scrolls instead of widening the page. */
+.checkout-layout > *, .grid > * { min-width: 0; }
+select { max-width: 100%; }
 .checkout { display: grid; grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.2fr); gap: 0; overflow: hidden; }
 .checkout-body { min-width: 0; }
 .checkout-summary { background: linear-gradient(160deg, var(--brand) 0%, #1f348f 100%); color: #fff; padding: 24px; display: flex; flex-direction: column; gap: 14px; }
