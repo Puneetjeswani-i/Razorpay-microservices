@@ -4,9 +4,9 @@ A Razorpay-style payment gateway split into **Spring Boot microservices** with S
 
 > The monolith version of this project lives in a separate repo: [Razorpay-monolith](https://github.com/Puneetjeswani-i/Razorpay-monolith).
 
-### 🔗 Live demo: https://puneetjeswani-i.github.io/Razorpay-microservices/
+### 🔗 Live demo: https://puneetjeswani-i.github.io/Razorpay-microservices/#/demo
 
-Click **Explore with the demo account** to try the merchant dashboard.
+Opens the merchant dashboard directly with a demo account. Works on any device, no install or sign-up needed.
 
 ## Frontend dashboard
 
