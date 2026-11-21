@@ -2,7 +2,7 @@
 
 A Razorpay-style payment gateway split into **Spring Boot microservices** with Spring Cloud, Kafka, Redis and PostgreSQL. It ships with observability (Zipkin, Prometheus, Grafana), Kubernetes manifests and a JMeter load test.
 
-> The monolith version of this project lives in a separate repo: [razorpay-monolith](https://github.com/Puneetjeswani-i/razorpay-monolith).
+> The monolith version of this project lives in a separate repo: [Razorpay-monolith](https://github.com/Puneetjeswani-i/Razorpay-monolith).
 
 ## Architecture
 
