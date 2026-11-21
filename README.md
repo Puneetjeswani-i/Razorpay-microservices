@@ -23,7 +23,7 @@ It runs in two modes:
 | Mode | What it does |
 |---|---|
 | **Demo** (default) | A simulator in the browser that follows the same API contracts as the backend: paths, request and response bodies, JWT and API key auth, validation, the payment state machine, and the bank simulator's per-method delay and success rate. This is what the hosted link uses, so it works without a server. |
-| **Live** | Calls a running API gateway (default `http://localhost:8080`, configurable in Settings). |
+| **Live** | Calls your real API gateway. Locally that can be `http://localhost:8090`; on the hosted site it must be a public `https://` URL, e.g. a Cloudflare tunnel. See [tools/live-proxy](tools/live-proxy/README.md). |
 
 Run it locally:
 
@@ -33,7 +33,7 @@ python -m http.server 5500
 # open http://localhost:5500
 ```
 
-Live mode calls the gateway straight from the browser, so the gateway must allow the dashboard's origin (CORS) if they run on different hosts or ports. The frontend is deployed to GitHub Pages by `.github/workflows/deploy-frontend.yml` on every push to `frontend/`.
+Live mode calls the gateway straight from the browser, so the gateway must allow the dashboard's origin (CORS). `tools/live-proxy/cors_proxy.py` does that in front of the gateway without changing any backend code. The [Live mode guide](tools/live-proxy/README.md) shows how to use Live mode from the hosted site. The frontend is deployed to GitHub Pages by `.github/workflows/deploy-frontend.yml` on every push to `frontend/`.
 
 ## Architecture
 
