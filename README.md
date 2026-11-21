@@ -4,6 +4,37 @@ A Razorpay-style payment gateway split into **Spring Boot microservices** with S
 
 > The monolith version of this project lives in a separate repo: [Razorpay-monolith](https://github.com/Puneetjeswani-i/Razorpay-monolith).
 
+### 🔗 Live demo: https://puneetjeswani-i.github.io/Razorpay-microservices/
+
+Click **Explore with the demo account** to try the merchant dashboard.
+
+## Frontend dashboard
+
+`frontend/` is a merchant dashboard for the platform: plain HTML, CSS and JavaScript with no build step.
+
+- **Dashboard:** collected volume, success rate, a 7-day volume chart and the split by payment method
+- **Orders and payments:** create orders, browse payments, inspect each payment's state machine timeline, capture authorized payments
+- **Test checkout:** pay by card (tokenized through vault-service first), UPI or net banking, and see every API request and response
+- **API keys and webhooks:** generate and rotate keys, manage webhook endpoints, view deliveries
+- **Architecture view:** the path of the latest request through the services is highlighted live
+
+It runs in two modes:
+
+| Mode | What it does |
+|---|---|
+| **Demo** (default) | A simulator in the browser that follows the same API contracts as the backend: paths, request and response bodies, JWT and API key auth, validation, the payment state machine, and the bank simulator's per-method delay and success rate. This is what the hosted link uses, so it works without a server. |
+| **Live** | Calls a running API gateway (default `http://localhost:8080`, configurable in Settings). |
+
+Run it locally:
+
+```bash
+cd frontend
+python -m http.server 5500
+# open http://localhost:5500
+```
+
+Live mode calls the gateway straight from the browser, so the gateway must allow the dashboard's origin (CORS) if they run on different hosts or ports. The frontend is deployed to GitHub Pages by `.github/workflows/deploy-frontend.yml` on every push to `frontend/`.
+
 ## Architecture
 
 ```
