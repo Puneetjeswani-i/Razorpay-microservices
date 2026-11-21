@@ -70,7 +70,7 @@ export async function request(method, path, { body, auth = "none", idempotent = 
         });
       } catch (e) {
         throw new ApiError(0, "NETWORK_ERROR",
-          `Could not reach ${settings.baseUrl}. Is the API gateway running, and does it allow requests from this page (CORS)?`);
+          `Could not reach ${settings.baseUrl}. Is the API gateway running, and does it allow requests from this page (CORS)? Switch to Demo mode to use the dashboard without a backend.`);
       }
       status = res.status;
       const text = await res.text();

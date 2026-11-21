@@ -23,6 +23,27 @@ function write(key, value) {
 
 const memory = {};
 
+// True when the dashboard is served from this machine (where Live mode can reach a local gateway).
+export const isLocalHost = ["localhost", "127.0.0.1", "[::1]", ""].includes(location.hostname);
+
+// On the public site the gateway must be a public HTTPS URL: browsers block https pages from
+// calling http:// URLs (mixed content) and block public sites from calling localhost / private IPs.
+export function isPublicHttpsUrl(url) {
+  try {
+    const u = new URL(url);
+    const h = u.hostname;
+    const privateHost = h === "localhost" || h.endsWith(".local") || h === "[::1]" ||
+      /^(127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|0\.)/.test(h);
+    return u.protocol === "https:" && !privateHost;
+  } catch {
+    return false;
+  }
+}
+
+export function liveModeUsable(url = settings.baseUrl) {
+  return isLocalHost || isPublicHttpsUrl(url);
+}
+
 export const settings = {
   get mode() { return read("mode", "demo"); },
   set mode(v) { write("mode", v); },

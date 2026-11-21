@@ -1,7 +1,7 @@
-import { settings, session } from "./store.js";
+import { settings, session, isLocalHost, isPublicHttpsUrl, liveModeUsable } from "./store.js";
 import { ensureSeeded, resetDemo, DEMO_LOGIN } from "./mock.js";
 import { api } from "./api.js";
-import { esc, icon } from "./ui.js";
+import { esc, icon, modal } from "./ui.js";
 import { renderLogin, renderSignup } from "./pages/auth.js";
 import { renderDashboard } from "./pages/dashboard.js";
 import { renderOrders } from "./pages/orders.js";
@@ -75,12 +75,50 @@ function wireLayout() {
   document.querySelectorAll("[data-mode]").forEach((b) => b.addEventListener("click", () => switchMode(b.dataset.mode)));
 }
 
-export function switchMode(mode) {
-  if (mode === settings.mode) return;
+function applyMode(mode) {
   settings.mode = mode;
   if (mode === "demo") ensureSeeded();
-  navigate(session.get() ? currentPath() : "/login");
+  if (!session.get() && !["/login", "/signup"].includes(currentPath())) return navigate("/login");
   route();
+}
+
+const SETUP_GUIDE = "https://github.com/Puneetjeswani-i/Razorpay-microservices/tree/main/tools/live-proxy#readme";
+
+// On the public site, Live mode needs a public HTTPS gateway URL (for example a Cloudflare tunnel
+// to tools/live-proxy). Ask for it before switching, so visitors never land in a mode that can't connect.
+function connectLiveDialog() {
+  route(); // keep the toggles showing the current mode until the visitor connects
+  const current = isPublicHttpsUrl(settings.baseUrl) ? settings.baseUrl : "";
+  modal({
+    title: "Connect to your backend",
+    body: `
+      <form class="stack" id="live-connect">
+        <p>Live mode sends every request to your real API gateway instead of the built-in demo. On this hosted site the gateway needs a <b>public HTTPS URL</b>; <code>localhost</code> can't be reached from a website.</p>
+        <label class="field">Gateway URL<input name="url" type="url" required placeholder="https://your-tunnel.trycloudflare.com" value="${esc(current)}"></label>
+        <p class="small" id="live-error" style="color:var(--danger)"></p>
+        <p class="muted small">Start the backend, then <code>tools/live-proxy</code> (adds CORS) and a Cloudflare tunnel. <a href="${SETUP_GUIDE}" target="_blank" rel="noopener">Setup guide →</a></p>
+        <div class="row wrap"><button class="btn" type="button" data-close>Stay in Demo</button><span class="spacer"></span><button class="btn primary" type="submit">Connect</button></div>
+      </form>`,
+    onMount(el, close) {
+      el.querySelector("#live-connect").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const url = new FormData(e.target).get("url").trim().replace(/\/+$/, "");
+        if (!isPublicHttpsUrl(url)) {
+          el.querySelector("#live-error").textContent = "Use a public https:// address. localhost, private IPs and http:// URLs are blocked by browsers on a hosted site.";
+          return;
+        }
+        settings.baseUrl = url;
+        close();
+        applyMode("live");
+      });
+    },
+  });
+}
+
+export function switchMode(mode) {
+  if (mode === settings.mode) return;
+  if (mode === "live" && !isLocalHost) return connectLiveDialog();
+  applyMode(mode);
 }
 
 async function route() {
@@ -121,6 +159,8 @@ async function route() {
   window.scrollTo(0, 0);
 }
 
+// On the public site, fall back to Demo if Live mode points at an address a website can't reach.
+if (settings.mode === "live" && !liveModeUsable()) settings.mode = "demo";
 if (settings.mode === "demo") ensureSeeded();
 window.addEventListener("hashchange", route);
 route();

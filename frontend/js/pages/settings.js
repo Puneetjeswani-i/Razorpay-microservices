@@ -1,4 +1,4 @@
-import { requestLog, session, settings } from "../store.js";
+import { requestLog, session, settings, isLocalHost, isPublicHttpsUrl } from "../store.js";
 import { resetDemo } from "../mock.js";
 import { esc, toast, when } from "../ui.js";
 import { switchMode } from "../app.js";
@@ -16,7 +16,10 @@ export function renderSettings(root) {
             <label class="field">API gateway URL<input name="baseUrl" value="${esc(settings.baseUrl)}" placeholder="http://localhost:8080"></label>
             <button class="btn" type="submit">Save URL</button>
           </form>
-          <div class="notice warn"><span>ℹ️</span><span>Live mode calls the gateway straight from the browser. If the dashboard is hosted on a different origin than the gateway, the gateway must allow that origin (CORS). Easiest: run the dashboard locally from the <code>frontend/</code> folder.</span></div>
+          <div class="notice warn"><span>ℹ️</span><span>Live mode calls the gateway straight from the browser, so the gateway must allow this site (CORS). ${isLocalHost
+            ? "Running locally, <code>http://localhost:8080</code> works if you start <code>tools/live-proxy</code> in front of the gateway."
+            : "On this hosted site the URL must be a public <b>https://</b> address, e.g. a Cloudflare tunnel to <code>tools/live-proxy</code>."}
+            <a href="https://github.com/Puneetjeswani-i/Razorpay-microservices/tree/main/tools/live-proxy#readme" target="_blank" rel="noopener">Setup guide →</a></span></div>
         </div>
         <div class="card card-body stack">
           <h3>Demo data</h3>
@@ -31,7 +34,11 @@ export function renderSettings(root) {
     root.querySelectorAll('input[name="mode"]').forEach((r) => r.addEventListener("change", () => switchMode(r.value)));
     root.querySelector("#live-form").addEventListener("submit", (e) => {
       e.preventDefault();
-      settings.baseUrl = new FormData(e.target).get("baseUrl").trim() || "http://localhost:8080";
+      const url = (new FormData(e.target).get("baseUrl").trim() || "http://localhost:8080").replace(/\/+$/, "");
+      if (!isLocalHost && !isPublicHttpsUrl(url)) {
+        return toast("On the hosted site the gateway URL must be a public https:// address (not localhost or http://).", "error");
+      }
+      settings.baseUrl = url;
       toast("Gateway URL saved", "success");
     });
     root.querySelector("#reset").addEventListener("click", () => {
