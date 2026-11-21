@@ -3,3 +3,5 @@
 target/
 *.log
 k8s/k8s-secrets.env
+tools/run-local/logs/
+tools/run-local/.secrets/
