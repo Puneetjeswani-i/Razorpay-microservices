@@ -89,6 +89,14 @@ Services talk to each other through **OpenFeign** clients on `/internal/**` endp
 
 ## Running locally
 
+**Quick start (Windows):** one script starts the infrastructure in Docker, builds every service and starts them in order. Add `-Tunnel` to also connect the hosted dashboard's Live mode. See [tools/run-local](tools/run-local/README.md).
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\run-local\start-backend.ps1 -Tunnel
+```
+
+The manual steps are below.
+
 ### Prerequisites
 
 - Java 25

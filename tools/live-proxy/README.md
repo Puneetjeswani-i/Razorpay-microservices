@@ -15,7 +15,9 @@ Browser (github.io) ──https──► Cloudflare tunnel ──► cors_proxy.
 
 ## Steps (Windows)
 
-**1. Start the backend** so that the API gateway is running (by default on `http://localhost:8080`). See the main [README](../../README.md#running-locally).
+> **Shortcut:** `powershell -ExecutionPolicy Bypass -File tools\run-local\start-backend.ps1 -Tunnel` does steps 1–4 for you and prints the URL to paste. See [tools/run-local](../run-local/README.md).
+
+**1. Start the backend** so that the API gateway is running (by default on `http://localhost:8080`). See [tools/run-local](../run-local/README.md).
 
 **2. Start the CORS proxy** in a new terminal:
 
